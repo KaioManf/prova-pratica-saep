@@ -1,0 +1,52 @@
+header{
+  width: 100%;
+  display: flex;
+  align-items: center;
+  height: 4rem;
+}
+
+h5{
+  position: absolute;
+  top: 1rem;
+  left: 0.4rem;
+  text-transform: uppercase;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+nav{
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+footer{
+  color: white;
+  background-color: black;
+  align-items: center;
+}
+
+#footer {
+  margin-left: 2rem;
+}
+
+.comment{
+  display: flex;
+}
+
+footer hr{
+  width: 95%;
+  border: 3px solid;
+}
+
+#yay{
+  margin-top: 3rem;
+  padding-left: 45%;
+}
+
+.yay {
+  margin-bottom: 4rem;
+}
+
+.ss {
+  text-align: right;
+}
