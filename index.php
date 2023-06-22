@@ -70,32 +70,33 @@
                         $dados = $stmt->fetchAll(PDO::FETCH_ASSOC);
                         foreach ($dados as $linha) {
                             echo "<div class='col'>
-                                    <div class='card shadow-sm'>
-                                        <img src='application/uploads/{$linha['imagem']}' >
-                                        <div class='card-body'>
-                                            <p class='card-text'><strong>{$linha['nome']}</strong></p>
-                                            <div class='ss'>
-                                                <form method='POST' action='index.php'>
-                                                    <input type='hidden' name='produto_id' value='{$linha['idProduto']}' />";
-                                                    if (isset($_SESSION['logado']) && $_SESSION['logado']) {
-                                                        // Usuário logado - exibir botões
-                                                        echo "
-                                                            <button type='submit' name='like'><img src='./application/uploads/like.svg'></button>
-                                                            <button type='submit' name='deslike'><img src='./application/uploads/deslike.svg'></button>
-                                                            <button><img src='./application/uploads/favorite.svg'></button>";
-                                                    } else {
-                                                        // Usuário não logado - mensagem para fazer login
-                                                        echo "
-                                                            <button type='button' onclick='alert(\"Faça login para executar esta ação.\")'><img src='./application/uploads/like.svg'></button>
-                                                            <button type='button' onclick='alert(\"Faça login para executar esta ação.\")'><img src='./application/uploads/deslike.svg'></button>
-                                                            <button onclick='alert(\"Faça login para executar esta ação.\")'><img src='./application/uploads/favorite.svg'></button>";
-                                                    }
+                                <div class='card shadow-sm'>
+                                    <img src='application/uploads/{$linha['imagem']}' >
+                                    <div class='card-body'>
+                                        <p class='card-text'><strong>{$linha['nome']}</strong></p>
+                                        <div class='ss'>
+                                            <form method='POST' action='index.php'>
+                                                <input type='hidden' name='produto_id' value='{$linha['idProduto']}' />";
+                                                if (isset($_SESSION['logado']) && $_SESSION['logado']) {
+                                                    // Usuário logado - exibir botões
                                                     echo "
-                                                </form>
-                                            </div>
+                                                        <button type='submit' name='like'><img src='./application/uploads/like.svg'></button>
+                                                        <button type='submit' name='dislike'><img src='./application/uploads/deslike.svg'></button>
+                                                        <button type='submit' name='favorite'><img src='./application/uploads/favorite.svg'></button>";
+                                                } else {
+                                                    // Usuário não logado - mensagem para fazer login
+                                                    echo "
+                                                        <button type='button' onclick='alert(\"Faça login para executar esta ação.\")'><img src='./application/uploads/like.svg'></button>
+                                                        <button type='button' onclick='alert(\"Faça login para executar esta ação.\")'><img src='./application/uploads/deslike.svg'></button>
+                                                        <button type='button' onclick='alert(\"Faça login para executar esta ação.\")'><img src='./application/uploads/favorite.svg'></button>";
+                                                }
+                                                
+                                                echo "
+                                            </form>
                                         </div>
                                     </div>
-                                </div>";
+                                </div>
+                            </div>";
                         }
                     ?>
                 </div>

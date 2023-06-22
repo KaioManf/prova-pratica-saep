@@ -12,7 +12,8 @@ create table usuarios(
 
 create table produtos(
     idProduto integer primary key auto_increment,
-    nome varchar(255)
+    nome varchar(255),
+    imagem varchar(255)
 );
 
 create table likes(
