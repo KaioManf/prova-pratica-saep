@@ -46,7 +46,37 @@
         <div class="album py-5 bg-body-tertiary">
             <div class="container">
                 <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
-                    
+                <?php 
+                        // SCRIPT PHP PARA SELECIONAR OS PRODUTOS NO BD E IMPRIMIR NO ALBUM
+
+                        // CONEXÃO COM O BD
+                        $strConnection = "mysql:host=localhost;dbname=saep";
+                        $db_usuario = 'root';
+                        $db_senha = 'senai';
+                        $conexao = new PDO($strConnection, $db_usuario, $db_senha);
+
+                        // SQL
+                        $sql = "SELECT * FROM favorite";
+                        
+                        // EXECUNTADO O SQL NO BD
+                        $sql = 'SELECT * FROM favorite';
+                        $stmt = $conexao->prepare($sql); 
+                        $stmt->execute();
+                        $dados = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                        
+                        // IMPRIMINDO OS DADOS NO ALBUM
+                        if (!empty($dados)) {
+                            foreach ($dados as $linha) {
+                                echo "<div class='col'>
+                                        <div class='card shadow-sm'>
+                                            <div class='card-body'>
+                                                <p class='card-text'>Produto: <strong>{$linha['idProduto']}</strong></p>
+                                            </div>
+                                        </div>
+                                    </div>";
+                            }
+                        }
+                    ?>
                 </div>
             </div>
         </div>

@@ -13,6 +13,11 @@
     <link rel="stylesheet" href="vendor/bootstrap-5.3.0-dist/css/bootstrap-grid.min.css">
     <link rel="stylesheet" href="vendor/bootstrap-5.3.0-dist/css/bootstrap-reboot.min.css">
     <link rel="stylesheet" href="vendor/bootstrap-5.3.0-dist/css/bootstrap-utilities.min.css">
+    <style>
+    .favorite-button.favorited {
+        background-color: red;
+    }
+</style>
 </head>
 <body>
     <header>
@@ -45,7 +50,7 @@
     <main>
         <div class="album py-5 bg-body-tertiary">
             <div class="container">
-                <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
+                <div class="row">
                     <?php
                         // SCRIPT PHP PARA SELECIONAR OS PRODUTOS NO BD E IMPRIMIR NO ALBUM
 
@@ -58,45 +63,50 @@
                         // SQL
                         $sql = "SELECT * FROM produtos";
 
-                        // EXECUNTADO O SQL NO BD
-                        $sql = 'SELECT * FROM produtos';
+                        // EXECUTANDO O SQL NO BD
                         $stmt = $conexao->prepare($sql); 
                         $stmt->execute();
                         $dados = $stmt->fetchAll(PDO::FETCH_ASSOC);
                         
                         // IMPRIMINDO OS DADOS NO ALBUM
-                        $stmt = $conexao->prepare($sql);
-                        $stmt->execute();
-                        $dados = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                        $counter = 0;
+                        $produtosFavoritos = array(); // Supondo que você tenha um array com os IDs dos produtos favoritados pelo usuário logado
                         foreach ($dados as $linha) {
+                            $produtoID = $linha['idProduto'];
+                            $favoritado = in_array($produtoID, $produtosFavoritos);
+                            if ($counter == 2 || $counter == 6) {
+                                echo "</div><div class='row'>";
+                            }
                             echo "<div class='col'>
                                 <div class='card shadow-sm'>
                                     <img src='application/uploads/{$linha['imagem']}' >
                                     <div class='card-body'>
                                         <p class='card-text'><strong>{$linha['nome']}</strong></p>
                                         <div class='ss'>
-                                            <form method='POST' action='index.php'>
-                                                <input type='hidden' name='produto_id' value='{$linha['idProduto']}' />";
+                                        <form method='POST' action='./application/like-dislike.php'>
+                                            <input type='hidden' name='favorite' value='{$linha["idProduto"]}'>";
                                                 if (isset($_SESSION['logado']) && $_SESSION['logado']) {
                                                     // Usuário logado - exibir botões
                                                     echo "
                                                         <button type='submit' name='like'><img src='./application/uploads/like.svg'></button>
                                                         <button type='submit' name='dislike'><img src='./application/uploads/deslike.svg'></button>
-                                                        <button type='submit' name='favorite'><img src='./application/uploads/favorite.svg'></button>";
+                                                        <button type='submit' name='favorite' formaction='./application/salvar-favorito.php' formmethod='post' class='favorite-button" . ($favoritado ? " favorited" : "") . "'><img src='./application/uploads/favorite.svg'></button>
+                                                    ";
                                                 } else {
                                                     // Usuário não logado - mensagem para fazer login
                                                     echo "
                                                         <button type='button' onclick='alert(\"Faça login para executar esta ação.\")'><img src='./application/uploads/like.svg'></button>
                                                         <button type='button' onclick='alert(\"Faça login para executar esta ação.\")'><img src='./application/uploads/deslike.svg'></button>
-                                                        <button type='button' onclick='alert(\"Faça login para executar esta ação.\")'><img src='./application/uploads/favorite.svg'></button>";
-                                                }
-                                                
+                                                        <button type='button' onclick='alert(\"Faça login para executar esta ação.\")'><img src='./application/uploads/favorite.svg'></button>
+                                                    ";
+                                                }                   
                                                 echo "
                                             </form>
                                         </div>
                                     </div>
                                 </div>
                             </div>";
+                            $counter++;
                         }
                     ?>
                 </div>
@@ -139,10 +149,8 @@
         </div>
     </div>
 
-
-    <!-- Bootstrap JS -->
+    <!-- Scripts -->
     <script src="vendor/bootstrap-5.3.0-dist/js/bootstrap.bundle.min.js"></script>
-
     <script>
         function validateForm() {
             const usuario = document.getElementById('txtUsuario').value;
@@ -155,6 +163,108 @@
                 return false;
             }
         }
+  document.addEventListener('DOMContentLoaded', function() {
+    var idUsuario = localStorage.getItem('id_usuario');
+
+    // Verificar se o usuário está logado antes de executar o script
+    if (idUsuario) {
+      var icons = document.getElementsByClassName('icon');
+      var activeIcon = null;
+
+      function updateCount(element, increment) {
+        var countElement = element.nextElementSibling;
+        var count = parseInt(countElement.textContent);
+        countElement.textContent = count + increment;
+      }
+
+      function toggleActiveIcon(icon) {
+        if (activeIcon !== null) {
+          activeIcon.classList.remove('active');
+        }
+
+        if (activeIcon !== icon) {
+          icon.classList.add('active');
+          activeIcon = icon;
+        } else {
+          activeIcon = null;
+        }
+      }
+
+      function handleClick(event) {
+        var icon = event.target;
+
+        if (icon.tagName !== 'svg') {
+          icon = icon.parentNode;
+        }
+
+        var type = icon.getAttribute('data-type');
+        var idProduto = icon.getAttribute('data-id');
+
+        switch (type) {
+          case 'like':
+            if (activeIcon === icon) {
+              updateCount(icon, -1);
+              toggleActiveIcon(icon);
+              sendAction(idProduto, idUsuario, 'remove-like');
+            } else {
+              if (activeIcon !== null) {
+                updateCount(activeIcon, -1);
+                activeIcon.classList.remove('active');
+              }
+              updateCount(icon, 1);
+              toggleActiveIcon(icon);
+              sendAction(idProduto, idUsuario, 'like');
+            }
+            break;
+
+          case 'dislike':
+            if (activeIcon === icon) {
+              updateCount(icon, -1);
+              toggleActiveIcon(icon);
+              sendAction(idProduto, idUsuario, 'remove-dislike');
+            } else {
+              if (activeIcon !== null) {
+                updateCount(activeIcon, -1);
+                activeIcon.classList.remove('active');
+              }
+              updateCount(icon, 1);
+              toggleActiveIcon(icon);
+              sendAction(idProduto, idUsuario, 'dislike');
+            }
+            break;
+
+          default:
+            break;
+        }
+      }
+
+      function sendAction(idProduto, idUsuario, action) {
+
+  var xhr = new XMLHttpRequest();
+  xhr.open('POST', 'like-dislike.php'); 
+  xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+  xhr.onload = function() {
+    // Verificar a resposta do servidor
+    if (xhr.status === 200) {
+      var response = JSON.parse(xhr.responseText);
+      if (response.success) {
+        // Atualizar o contador de likes na interface
+        var increment = response.increment;
+        var countElement = document.getElementById('count-' + idProduto);
+        var count = parseInt(countElement.textContent);
+        countElement.textContent = count + increment;
+      }
+    }
+  };
+  xhr.send('id_produto=' + encodeURIComponent(idProduto) + '&id_usuario=' + encodeURIComponent(idUsuario) + '&action=' + encodeURIComponent(action));
+}
+
+
+      for (var i = 0; i < icons.length; i++) {
+        icons[i].addEventListener('click', handleClick);
+      }
+    }
+  });
     </script>
 </body>
 </html>

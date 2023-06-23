@@ -16,20 +16,13 @@ create table produtos(
     imagem varchar(255)
 );
 
-create table likes(
-    idLike integer primary key auto_increment,
-    idUsuario integer,
-    idProduto integer,
-    foreign key(idUsuario) references usuarios(idUsuario),
-    foreign key(idProduto) references produtos(idProduto)
-);
-
-create table dislike(
-    idDislike integer primary key auto_increment,
-    idUsuario integer,
-    idProduto integer,
-    foreign key(idUsuario) references usuarios(idUsuario),
-    foreign key(idProduto) references produtos(idProduto)
+CREATE TABLE likes (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    idProduto INT NOT NULL,
+    idUsuario INT NOT NULL,
+    tipo ENUM('like', 'dislike') NOT NULL,
+    FOREIGN KEY (idProduto) REFERENCES produtos (idProduto),
+    FOREIGN KEY (idUsuario) REFERENCES usuarios (idUsuario)
 );
 
 create table favorite(
@@ -43,5 +36,4 @@ create table favorite(
 select * from produtos;
 select * from usuarios;
 select * from likes;
-select * from dislike;
 select * from favorite;
