@@ -70,7 +70,8 @@ footer {
 }
 
 .comment {
-  display: flex;
+  width: 95%;
+  border-bottom: solid 0.3rem #FFFFFF;
 }
 
 footer hr {
@@ -84,7 +85,7 @@ footer hr {
 }
 
 .yay {
-  margin-bottom: 4rem;
+  margin-top: 2rem;
 }
 
 .ss {

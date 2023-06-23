@@ -118,7 +118,6 @@
             <div class="comment">
                 <h1 id="yay">VESTE VC</h1>
             </div>
-            <hr>
             <p class="yay">&copy; 2023 - Todos os direitos reservados</p>
             <br><br><br>
         </div>
@@ -163,108 +162,6 @@
                 return false;
             }
         }
-  document.addEventListener('DOMContentLoaded', function() {
-    var idUsuario = localStorage.getItem('id_usuario');
-
-    // Verificar se o usuário está logado antes de executar o script
-    if (idUsuario) {
-      var icons = document.getElementsByClassName('icon');
-      var activeIcon = null;
-
-      function updateCount(element, increment) {
-        var countElement = element.nextElementSibling;
-        var count = parseInt(countElement.textContent);
-        countElement.textContent = count + increment;
-      }
-
-      function toggleActiveIcon(icon) {
-        if (activeIcon !== null) {
-          activeIcon.classList.remove('active');
-        }
-
-        if (activeIcon !== icon) {
-          icon.classList.add('active');
-          activeIcon = icon;
-        } else {
-          activeIcon = null;
-        }
-      }
-
-      function handleClick(event) {
-        var icon = event.target;
-
-        if (icon.tagName !== 'svg') {
-          icon = icon.parentNode;
-        }
-
-        var type = icon.getAttribute('data-type');
-        var idProduto = icon.getAttribute('data-id');
-
-        switch (type) {
-          case 'like':
-            if (activeIcon === icon) {
-              updateCount(icon, -1);
-              toggleActiveIcon(icon);
-              sendAction(idProduto, idUsuario, 'remove-like');
-            } else {
-              if (activeIcon !== null) {
-                updateCount(activeIcon, -1);
-                activeIcon.classList.remove('active');
-              }
-              updateCount(icon, 1);
-              toggleActiveIcon(icon);
-              sendAction(idProduto, idUsuario, 'like');
-            }
-            break;
-
-          case 'dislike':
-            if (activeIcon === icon) {
-              updateCount(icon, -1);
-              toggleActiveIcon(icon);
-              sendAction(idProduto, idUsuario, 'remove-dislike');
-            } else {
-              if (activeIcon !== null) {
-                updateCount(activeIcon, -1);
-                activeIcon.classList.remove('active');
-              }
-              updateCount(icon, 1);
-              toggleActiveIcon(icon);
-              sendAction(idProduto, idUsuario, 'dislike');
-            }
-            break;
-
-          default:
-            break;
-        }
-      }
-
-      function sendAction(idProduto, idUsuario, action) {
-
-  var xhr = new XMLHttpRequest();
-  xhr.open('POST', 'like-dislike.php'); 
-  xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-  xhr.onload = function() {
-    // Verificar a resposta do servidor
-    if (xhr.status === 200) {
-      var response = JSON.parse(xhr.responseText);
-      if (response.success) {
-        // Atualizar o contador de likes na interface
-        var increment = response.increment;
-        var countElement = document.getElementById('count-' + idProduto);
-        var count = parseInt(countElement.textContent);
-        countElement.textContent = count + increment;
-      }
-    }
-  };
-  xhr.send('id_produto=' + encodeURIComponent(idProduto) + '&id_usuario=' + encodeURIComponent(idUsuario) + '&action=' + encodeURIComponent(action));
-}
-
-
-      for (var i = 0; i < icons.length; i++) {
-        icons[i].addEventListener('click', handleClick);
-      }
-    }
-  });
     </script>
 </body>
 </html>
